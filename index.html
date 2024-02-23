@@ -1,5 +1,8 @@
 <!doctype html>
 <html>
+<head>
+    <script src="./ImageParser.js"></script>
+</head>
 <body>
   <canvas id="my-canvas" width="640" height="480"></canvas>
   <script>
@@ -9,13 +12,17 @@
         video.addEventListener('loadedmetadata', function() {
             const context = canvas.getContext('2d');
             var drawFrame = function() {
-                context.drawImage(video, 0, 0);
-                context.fillStyle = "red";
-                context.beginPath();
-                context.arc(targetLocal[0], targetLocal[1], 5, 0, 2 * Math.PI);
-                context.fill();
-                window.requestAnimationFrame(drawFrame);
-            };
+                setTimeout(() => {
+                    context.drawImage(video, 0, 0);
+                    targetLocal = getData(canvas, canvas.width, canvas.height, 1)[1]
+                    console.log(targetLocal)
+                    context.fillStyle = "red";
+                    context.beginPath();
+                    context.arc(targetLocal[0], targetLocal[1], 5, 0, 2 * Math.PI);
+                    context.fill();
+                    window.requestAnimationFrame(drawFrame);
+                }, 1000);
+            }   
             drawFrame();
         });
         video.autoplay = true;
