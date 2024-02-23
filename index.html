@@ -10,6 +10,10 @@
             const context = canvas.getContext('2d');
             var drawFrame = function() {
                 context.drawImage(video, 0, 0);
+                context.fillStyle = "red";
+                context.beginPath();
+                context.arc(targetLocal[0], targetLocal[1], 5, 0, 2 * Math.PI);
+                context.fill();
                 window.requestAnimationFrame(drawFrame);
             };
             drawFrame();
@@ -45,6 +49,8 @@
     // Usage example:
     
     var canvas = document.querySelector('#my-canvas');
+
+    targetLocal = [50,50];
     
     playCamera(canvas, canvas.width, canvas.height);
 
