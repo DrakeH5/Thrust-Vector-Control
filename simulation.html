@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <script src="./ImageParser.js"></script>
+        <script src=".\node_modules\three\build\three.js"></script>
+    </head>
+    <body>
+        
+        <style>
+            body {
+                margin: 0;
+                height: 100vh;
+            }
+            canvas {
+                display: block;
+            }
+        </style>
+
+        <script>
+
+            var scene = new THREE.Scene(); //created a three.js scene
+
+            var camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000) //create a camera
+            camera.position.z = 10;
+
+            var renderer = new THREE.WebGLRenderer({antialias: true}); 
+            renderer.setClearColor("lightblue"); 
+            renderer.setSize(window.innerWidth,window.innerHeight);
+
+            document.body.appendChild(renderer.domElement); 
+
+
+            var geometry = new THREE.CylinderGeometry(1, 1, 5, 32 ); 
+            var material = new THREE.MeshBasicMaterial( {color: "grey"} ); 
+            var rocket = new THREE.Mesh( geometry, material ); 
+            scene.add( rocket );
+
+
+            var geometry = new THREE.BoxGeometry(0.25, 3, 0.25); 
+            var material = new THREE.MeshLambertMaterial({color: 0xFFCC00}); 
+            var thrustAngleArrow = new THREE.Mesh(geometry, material);
+            thrustAngleArrow.position.y = -3.45
+            scene.add(thrustAngleArrow);
+
+            rocketAngle=[Math.random(), Math.random()];
+
+
+            var light = new THREE.PointLight(0xFFFFFF, 1, 500); 
+            light.position.set(10, 0, 25);
+            scene.add(light);
+
+
+
+            function Physics(inputX, rocketRadius=1, avgThrust=5, mass=1, time=0.005){
+                var torqueX=0;
+                var angularSpeedX=0;
+                var  xGyroDegree=0;
+                if(inputX <= 5 && -inputX > -5){
+                    torqueX = rocketRadius * avgThrust * Math.sin(-inputX)
+                } else if(-inputX > 5) {
+                    torqueX = (rocketRadius * avgThrust * Math.sin(-5));
+                } else {
+                    torqueX = (rocketRadius * avgThrust * Math.sin(5));
+                }
+                angularSpeedX = (angularSpeedX + ((torqueX / rocketRadius) / mass) * time);
+                xGyroDegree = xGyroDegree + ((angularSpeedX * time) + (((Math.random()*200)-100) / 90))
+                return [torqueX, angularSpeedX, xGyroDegree]
+            }
+
+            Physics()
+
+
+            var render = function() {
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+
+                results = Physics(thrustAngleArrow.rotation.z)
+                //rocket.position.x += 
+                rocket.rotation.z += results[1]
+                //thrustAngleArrow.position.x = rocket.position.x
+                thrustAngleArrow.rotation.z = results[2]
+
+              results = Physics(thrustAngleArrow.rotation.x)
+                rocket.rotation.x += results[1]
+                thrustAngleArrow.rotation.x = results[2]
+            }
+
+            render();
+            
+        </script>
+    </body>
+</html>
